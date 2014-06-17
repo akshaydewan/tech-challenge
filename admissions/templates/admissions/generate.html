@@ -1,0 +1,12 @@
+{% extends 'admissions/base.html' %}
+
+{% block generateClass %}active{% endblock %}
+
+{% block content %}
+<h1>Generate Data</h1>
+<p class="lead">Click to clear all records and generate 100 admissions</p>
+<form action="" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Generate" />
+</form>
+{% endblock %}
