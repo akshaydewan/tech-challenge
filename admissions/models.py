@@ -15,6 +15,9 @@ class Student(models.Model):
         percent_sem3 = models.DecimalField(max_digits=4, decimal_places=2)
         percent_sem4 = models.DecimalField(max_digits=4, decimal_places=2)
         
+        def __unicode__(self):
+                return self.name
+        
 class AdmissionRequest(models.Model):
         STATUS = (
                 ('PENDING', 'Pending'),
@@ -24,4 +27,8 @@ class AdmissionRequest(models.Model):
         student = models.ForeignKey(Student)
         date = models.DateField()
         department = models.CharField(max_length=200)
-        processed_by = models.CharField(max_length=200)
+        status = models.CharField(max_length=40)
+        #processed_by = models.CharField(max_length=200)
+        
+        def __unicode__(self):
+                return self.student.name

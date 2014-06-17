@@ -5,8 +5,34 @@
 {% block content %}
 <h1>Generate Data</h1>
 <p class="lead">Click to clear all records and generate 100 admissions</p>
-<form action="" method="post">
+<form action="" method="post" id="generateForm">
   {% csrf_token %}
-  <input type="submit" value="Generate" />
+  <input id="generateBtn" type="submit" value="Generate" />
 </form>
+<div id="busy" style="display: none">Generating...</div>
+
+{% endblock %}
+
+{% block scriptBlock %}
+<script type="text/javascript">
+  $("#generateForm").submit(function(e){
+    $("#generateBtn").attr("disabled", true);
+    $("#busy").show();
+    $.ajax({
+      type: "POST",
+      url: "/admissions/generate/",
+      data: $(this).serialize(),
+      success: function(data) {
+        $("#generateBtn").attr("disabled", false);
+        $("#busy").hide();
+      },
+      error: function() {
+        $("#generateBtn").attr("disabled", false);
+        $("#busy").hide();
+        alert("error");
+      }
+    });
+    e.preventDefault();
+  });
+</script>
 {% endblock %}
