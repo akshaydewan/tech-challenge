@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from models import AdmissionRequest, Student
 import datagenerator
 
 # Create your views here.
@@ -9,6 +10,8 @@ def index(request):
 def generateData(request):
     if request.POST:
         list = datagenerator.generate()
+        AdmissionRequest.objects.all().delete()
+        Student.objects.all().delete()
         for record in list:
             student = record[0]
             admissionRequest = record[1]
