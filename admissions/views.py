@@ -1,9 +1,13 @@
+from datetime import date
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest
 from models import AdmissionRequest, Student
 import datagenerator
+from django.db.models import Count
+from django.core import serializers
+from django.utils import simplejson
 
-# Create your views here.
+
 def index(request):
     return render(request, 'admissions/index.html')
 
@@ -22,3 +26,24 @@ def generateData(request):
     else:
         return render(request, 'admissions/generate.html')
 
+def handleRestRequest(request):
+    queryDict = request.GET
+    groupBy = queryDict.get("groupBy", "")
+    allowedGroupBy = ['age', 'gender', 'date', '']
+    if groupBy not in allowedGroupBy:
+        return HttpResponseBadRequest('allowed grouping: ' + ' '.join(allowedGroupBy))
+    if groupBy == 'date':
+        values = AdmissionRequest.objects.values('date').annotate(count=Count('date'))
+        response = simplejson.dumps(createDict(values))
+        return HttpResponse(response, content_type='application/json')
+    else:        
+        response = serializers.serialize("json", AdmissionRequest.objects.all())
+        return HttpResponse(response)
+
+def createDict(values):
+    list = []
+    for value in values:
+        date = str(value.get('date'))
+        count = value.get('count')
+        list.append({'date' : date, 'count': count})
+    return list
