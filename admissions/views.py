@@ -27,18 +27,26 @@ def generateData(request):
         return render(request, 'admissions/generate.html')
 
 def handleRestRequest(request):
-    queryDict = request.GET
-    groupBy = queryDict.get("groupBy", "")
     allowedGroupBy = ['age', 'gender', 'date', '']
+    groupBy = request.GET.get("groupBy", "")
+    genderFilter = request.GET.getlist("gender")
     if groupBy not in allowedGroupBy:
         return HttpResponseBadRequest('allowed grouping: ' + ' '.join(allowedGroupBy))
     if groupBy == 'date':
-        values = AdmissionRequest.objects.values('date').annotate(count=Count('date'))
+        #values = AdmissionRequest.objects.values('date').annotate(count=Count('date'))
+        values = getAdmissionCount(genderFilter)
         response = simplejson.dumps(createDict(values))
         return HttpResponse(response, content_type='application/json')
     else:        
         response = serializers.serialize("json", AdmissionRequest.objects.all())
         return HttpResponse(response)
+
+def getAdmissionCount(genderFilter):
+    q = AdmissionRequest.objects.all()
+    if genderFilter:
+        q = q.filter(student__gender__in=genderFilter)
+    return q.values('date').annotate(count=Count('date'))
+        
 
 def createDict(values):
     list = []

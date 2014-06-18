@@ -31,10 +31,23 @@ var chart = d3.select(".chart")
     .attr("height", height + margin.top + margin.bottom)
       .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-$.ajax({
-  type: "GET",
-  url: "/admissions/rest/admissionrequests/?groupBy=date",
-})
+
+function refreshChart() {
+
+  chart.selectAll("*").remove();
+
+  /*var genderFilter = [];
+
+  $('input:checkbox[name="gender"]').each(function() { 
+    if($(this).prop('checked')) { genderFilter.push($(this).val()); }
+  });
+  console.log(genderFilter);*/
+
+  $.ajax({
+    type: "GET",
+    data: $("#filterForm").serialize(),
+    url: "/admissions/rest/admissionrequests/?groupBy=date",
+  })
   .done(function(data) {
 
     x.domain(data.map(function(d) { return d.date; }));
@@ -72,6 +85,10 @@ $.ajax({
       .attr("width", x.rangeBand());
 
   });
+
+}
+
+refreshChart();
 
 </script>
 
@@ -111,5 +128,17 @@ $.ajax({
 <h1>Dashboard</h1>
 
 <svg class="chart"></svg>
+
+<div id="filters">
+  <div class="heading">Filters</div>
+  <form id="filterForm">
+    <div class="filtergroup">
+      <input type="checkbox" name="gender" checked="checked" value="M" onclick="refreshChart()">Male</input>
+      <input type="checkbox" name="gender" checked="checked" value="F" onclick="refreshChart()">Female</input>
+    </div>
+  </form>
+</div>
+
+
 
 {% endblock %}
