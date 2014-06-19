@@ -30,21 +30,27 @@ def handleRestRequest(request):
     allowedGroupBy = ['age', 'gender', 'date', '']
     groupBy = request.GET.get("groupBy", "")
     genderFilter = request.GET.getlist("gender")
+    departmentFilter = request.GET.getlist("department")
+    universityFilter = request.GET.getlist("university")
     if groupBy not in allowedGroupBy:
         return HttpResponseBadRequest('allowed grouping: ' + ' '.join(allowedGroupBy))
     if groupBy == 'date':
         #values = AdmissionRequest.objects.values('date').annotate(count=Count('date'))
-        values = getAdmissionCount(genderFilter)
+        values = getAdmissionCount(genderFilter, departmentFilter, universityFilter)
         response = simplejson.dumps(createDict(values))
         return HttpResponse(response, content_type='application/json')
     else:        
         response = serializers.serialize("json", AdmissionRequest.objects.all())
         return HttpResponse(response)
 
-def getAdmissionCount(genderFilter):
+def getAdmissionCount(genderFilter, departmentFilter, universityFilter):
     q = AdmissionRequest.objects.all()
     if genderFilter:
         q = q.filter(student__gender__in=genderFilter)
+    if departmentFilter:
+        q = q.filter(department__in=departmentFilter)
+    if universityFilter:
+        q = q.filter(student__university__in=universityFilter)
     return q.values('date').annotate(count=Count('date'))
         
 

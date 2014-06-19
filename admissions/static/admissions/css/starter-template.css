@@ -5,3 +5,37 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+
+.filtergroup {
+    max-width: 200px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.filtergroup label {
+    display: block;
+    font-weight: normal;
+    text-align: left;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.filtertitle {
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: left;
+    margin-left: 20px;
+}
+
+.heading {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#loading {
+
+}
+
+input[type='checkbox'] {
+    margin-right: 3px;
+}

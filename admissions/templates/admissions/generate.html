@@ -3,13 +3,18 @@
 {% block generateClass %}active{% endblock %}
 
 {% block content %}
+{% load static %}
 <h1>Generate Data</h1>
 <p class="lead">Click to clear all records and generate 100 admissions</p>
 <form action="" method="post" id="generateForm">
   {% csrf_token %}
   <input id="generateBtn" type="submit" value="Generate" />
 </form>
-<div id="busy" style="display: none">Generating...</div>
+<div id="busy" style="display: none;">
+   <img src="{% static 'admissions/images/ajax-loader.gif' %}" alt="loading"/>
+   <p>This may take a while...</p>
+</div>
+
 
 {% endblock %}
 

@@ -35,13 +35,7 @@ var chart = d3.select(".chart")
 function refreshChart() {
 
   chart.selectAll("*").remove();
-
-  /*var genderFilter = [];
-
-  $('input:checkbox[name="gender"]').each(function() { 
-    if($(this).prop('checked')) { genderFilter.push($(this).val()); }
-  });
-  console.log(genderFilter);*/
+  $("#loading").show();
 
   $.ajax({
     type: "GET",
@@ -84,6 +78,7 @@ function refreshChart() {
       .attr("height", function(d) { return height - y(d.count); })
       .attr("width", x.rangeBand());
 
+      $("#loading").hide();
   });
 
 }
@@ -97,6 +92,8 @@ refreshChart();
 {% block dashboardClass %}active{% endblock %}
 
 {% block content %}
+
+{% load static %}
 
 <style>
 .chart rect {
@@ -126,15 +123,38 @@ refreshChart();
 </style>
 
 <h1>Dashboard</h1>
+<p>No. of admissions by date</p>
 
 <svg class="chart"></svg>
-
+<br/>
+<br/>
 <div id="filters">
+  <div id="loading" style="display: none;">
+    <img src="{% static 'admissions/images/ajax-loader.gif' %}" alt="loading"/>
+  </div>
   <div class="heading">Filters</div>
+  <br/>
   <form id="filterForm">
+    <div class="filtercontainer">
     <div class="filtergroup">
-      <input type="checkbox" name="gender" checked="checked" value="M" onclick="refreshChart()">Male</input>
-      <input type="checkbox" name="gender" checked="checked" value="F" onclick="refreshChart()">Female</input>
+      <div class="filtertitle">Gender</div>
+      <label><input type="checkbox" name="gender" checked="checked" value="M" onclick="refreshChart()">Male</input></label>
+      <label><input type="checkbox" name="gender" checked="checked" value="F" onclick="refreshChart()">Female</input></label>
+    </div>
+    <div class="filtergroup">
+      <div class="filtertitle">Department</div>
+      <label><input type="checkbox" name="department" checked="checked" value="COMPUTER_SCIENCE" onclick="refreshChart()">Computer Science</input></label>
+      <label><input type="checkbox" name="department" checked="checked" value="MICROBIOLOGY" onclick="refreshChart()">Microbiology</input></label>
+      <label><input type="checkbox" name="department" checked="checked" value="AERONAUTICS" onclick="refreshChart()">Aeronautics</input></label>
+      <label><input type="checkbox" name="department" checked="checked" value="MEDICINE" onclick="refreshChart()">Medicine</input></label>
+    </div>
+    <div class="filtergroup">
+      <div class="filtertitle">University</div>
+      <label><input type="checkbox" name="university" checked="checked" value="MUMBAI" onclick="refreshChart()">Mumbai</input></label>
+      <label><input type="checkbox" name="university" checked="checked" value="DELHI" onclick="refreshChart()">Delhi</input></label>
+      <label><input type="checkbox" name="university" checked="checked" value="PUNE" onclick="refreshChart()">Pune</input></label>
+      <label><input type="checkbox" name="university" checked="checked" value="CHENNAI" onclick="refreshChart()">Chennai</input></label>
+    </div>
     </div>
   </form>
 </div>
